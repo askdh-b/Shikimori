@@ -1,7 +1,8 @@
-package rustam.urazov.shikimori.screen.login
+package rustam.urazov.shikimori.features.screens.login
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,34 +20,75 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import rustam.urazov.shikimori.R
+import rustam.urazov.shikimori.core.exception.Failure
+import rustam.urazov.shikimori.core.extention.empty
+import rustam.urazov.shikimori.features.models.AuthorizationCodeView
 import rustam.urazov.shikimori.ui.theme.*
 
-
 @Composable
-fun LogIn() {
+fun LogIn(viewModel: LogInViewModel) {
+    val failure by viewModel.failure.collectAsState()
+    val token by viewModel.token.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 144.dp)
     ) {
+        var authorizationCode by remember { mutableStateOf(String.empty()) }
+
         Text(
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(horizontal = 18.dp),
-            text = "Shikimori App",
+            text = APP_NAME,
             color = BlueStart,
             fontSize = 32.sp
         )
         Link()
-        AuthorizationCode()
+        AuthorizationCode(
+            authorizationCode = authorizationCode,
+            onAuthorizationCodeChange = { authorizationCode = it })
         LogInButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(CircleShape)
                 .size(48.dp),
-            text = "Войти",
+            text = LOG_IN,
             gradient = Brush.horizontalGradient(listOf(BlueStart, BlueFinish)),
-            onCLick = {})
+            onCLick = {
+                viewModel.sendAction(
+                    LogInViewModel.Action.Authorize(
+                        AuthorizationCodeView(
+                            authorizationCode
+                        )
+                    )
+                )
+            })
+    }
+
+    when (failure) {
+        is Failure.BaseFailure -> {}
+        is Failure.StorageError -> {
+            Log.e("Error", (failure as Failure.StorageError).errorResponse.error)
+        }
+        is Failure.ServerError -> {
+            Log.e("Error", (failure as Failure.ServerError).errorResponse.error)
+        }
+        is Failure.NetworkConnection -> {
+            Log.e("Error", "Пожалуйста проверьте подключение к Сети")
+        }
+        else -> {
+            Log.e("Error", "Неизвестная ошибка")
+        }
+    }
+
+    when (token) {
+        is LogInViewModel.State.Waiting -> {}
+        is LogInViewModel.State.TokenView -> {
+            viewModel.saveTokens(token as LogInViewModel.State.TokenView)
+        }
+        is LogInViewModel.State.Saved -> {}
     }
 }
 
@@ -98,15 +140,13 @@ fun Redirect() {
 }
 
 @Composable
-fun AuthorizationCode() {
-    var authorizationCode by remember { mutableStateOf("") }
-
+fun AuthorizationCode(authorizationCode: String, onAuthorizationCodeChange: (String) -> Unit) {
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp, vertical = 6.dp),
         value = authorizationCode,
-        onValueChange = { authorizationCode = it },
+        onValueChange = onAuthorizationCodeChange,
         label = { Text(text = AUTHORIZATION_CODE) },
         maxLines = 1,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -152,7 +192,9 @@ fun LogInButton(
     }
 }
 
-private const val AUTHORIZATION_CODE = "Код авторизации"
-private const val URL_SHORT = "https://shikimori.one/oauth/"
 private const val URL =
     "https://shikimori.one/oauth/authorize?client_id=5ST0AkJ5LcBgIAXVkxKrtL_Wk33tgtPlyyYv-A68xNs&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=user_rates+comments+topics"
+private const val APP_NAME = "Shikimori App"
+private const val LOG_IN = "Войти"
+private const val AUTHORIZATION_CODE = "Код авторизации"
+private const val URL_SHORT = "https://shikimori.one/oauth/"

@@ -1,4 +1,4 @@
-package rustam.urazov.shikimori.activity
+package rustam.urazov.shikimori.features
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,12 +7,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import rustam.urazov.shikimori.screen.login.LogIn
+import dagger.hilt.android.AndroidEntryPoint
+import rustam.urazov.shikimori.features.screens.login.LogIn
+import rustam.urazov.shikimori.features.screens.login.LogInViewModel
 import rustam.urazov.shikimori.ui.theme.ShikimoriTheme
 import rustam.urazov.shikimori.ui.theme.White
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,9 +36,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = White
                 ) {
-                    LogIn()
+                    val navController = rememberNavController()
+
+                    NavHost (navController = navController, startDestination = LOG_IN) {
+                        composable(route = LOG_IN) {
+                            val logInViewModel: LogInViewModel = hiltViewModel()
+                            LogIn(logInViewModel)
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+private const val LOG_IN = "logIn"
