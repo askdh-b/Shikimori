@@ -33,7 +33,7 @@ class LogInViewModel
 
     init {
         viewModelScope.launch {
-            loadState()
+            waitingState()
         }
     }
 
@@ -43,7 +43,7 @@ class LogInViewModel
         }
     }
 
-    private fun loadState() = viewModelScope.launch {
+    private fun waitingState() = viewModelScope.launch {
         mutableToken.value = State.Waiting
     }
 
@@ -70,9 +70,7 @@ class LogInViewModel
 
     private fun handleSavedToken(result: Result<Nothing>) {
         when (result) {
-            is Result.Saved -> {
-                mutableToken.value = State.Saved
-            }
+            is Result.Saved -> { mutableToken.value = State.Saved }
             else -> {}
         }
     }
