@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                             LogIn(logInViewModel, mainActivityViewModel, navController)
                         }
                         composable(MAIN) {
-                            Main()
+                            Main(mainActivityViewModel)
                         }
                     }
                 }
