@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import rustam.urazov.shikimori.features.models.ErrorMessage
 import javax.inject.Inject
 
 @HiltViewModel
@@ -12,14 +13,14 @@ class MainActivityViewModel
 @Inject constructor() : ViewModel() {
 
     sealed class State {
-        data class Visible(val message: String) : State()
+        data class Visible(val errorMessage: ErrorMessage) : State()
 
         object Invisible : State()
         object Closed : State()
     }
 
     sealed class Action {
-        data class ShowDialog(val message: String) : Action()
+        data class ShowDialog(val errorMessage: ErrorMessage) : Action()
 
         object CloseDialog : Action()
     }
@@ -37,13 +38,13 @@ class MainActivityViewModel
 
     fun sendAction(action: Action) {
         when (action) {
-            is Action.ShowDialog -> { showDialog(action.message) }
+            is Action.ShowDialog -> { showDialog(action.errorMessage) }
             is Action.CloseDialog -> { closeDialog() }
         }
     }
 
-    private fun showDialog(message: String) {
-        mutableDialogState.value = State.Visible(message)
+    private fun showDialog(errorMessage: ErrorMessage) {
+        mutableDialogState.value = State.Visible(errorMessage)
     }
 
     private fun closeDialog() {

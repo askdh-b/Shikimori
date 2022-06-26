@@ -23,6 +23,7 @@ import rustam.urazov.shikimori.core.exception.Failure
 import rustam.urazov.shikimori.core.extention.empty
 import rustam.urazov.shikimori.features.MainActivityViewModel
 import rustam.urazov.shikimori.features.models.AuthorizationCodeView
+import rustam.urazov.shikimori.features.models.ErrorMessage
 import rustam.urazov.shikimori.ui.theme.*
 
 @Composable
@@ -70,23 +71,41 @@ fun LogIn(viewModel: LogInViewModel, parentViewModel: MainActivityViewModel) {
     when (failure) {
         is Failure.BaseFailure -> {}
         is Failure.StorageError -> {
-            parentViewModel.sendAction(MainActivityViewModel.Action.ShowDialog((failure as Failure.StorageError).errorResponse.error))
+            parentViewModel.sendAction(
+                MainActivityViewModel.Action.ShowDialog(
+                    ErrorMessage(
+                        STORAGE_ERROR,
+                        (failure as Failure.StorageError).errorResponse.error
+                    )
+                )
+            )
             viewModel.handleFailure(Failure.BaseFailure)
         }
         is Failure.ServerError -> {
-            parentViewModel.sendAction(MainActivityViewModel.Action.ShowDialog((failure as Failure.ServerError).errorResponse.error))
+            parentViewModel.sendAction(
+                MainActivityViewModel.Action.ShowDialog(
+                    ErrorMessage(SERVER_ERROR, (failure as Failure.ServerError).errorResponse.error)
+                )
+            )
             viewModel.handleFailure(Failure.BaseFailure)
         }
         is Failure.NetworkConnection -> {
             parentViewModel.sendAction(
                 MainActivityViewModel.Action.ShowDialog(
-                    NETWORK_CONNECTION_ERROR
+                    ErrorMessage(NETWORK_CONNECTION_ERROR, NETWORK_CONNECTION_ERROR_BODY)
                 )
             )
             viewModel.handleFailure(Failure.BaseFailure)
         }
         else -> {
-            parentViewModel.sendAction(MainActivityViewModel.Action.ShowDialog(UNEXPECTED_ERROR))
+            parentViewModel.sendAction(
+                MainActivityViewModel.Action.ShowDialog(
+                    ErrorMessage(
+                        UNEXPECTED_ERROR,
+                        UNEXPECTED_ERROR_BODY
+                    )
+                )
+            )
             viewModel.handleFailure(Failure.BaseFailure)
         }
     }
@@ -206,5 +225,11 @@ private const val APP_NAME = "Shikimori App"
 private const val LOG_IN = "Войти"
 private const val AUTHORIZATION_CODE = "Код авторизации"
 private const val URL_SHORT = "https://shikimori.one/oauth/"
-private const val NETWORK_CONNECTION_ERROR = "Пожалуйста проверьте подключение к Сети"
+
+private const val SERVER_ERROR = "Ошибка сервера"
+private const val STORAGE_ERROR = "Ошибка памяти"
+private const val NETWORK_CONNECTION_ERROR = "Ошибка подключения"
 private const val UNEXPECTED_ERROR = "Неизвестная ошибка"
+
+private const val NETWORK_CONNECTION_ERROR_BODY = "Пожалуйста проверьте подключение к Сети"
+private const val UNEXPECTED_ERROR_BODY = "Произошла непредусмотренная ошибка"

@@ -1,6 +1,5 @@
 package rustam.urazov.shikimori.features.dialogs.error
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,7 @@ fun ErrorDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         Button(
@@ -40,10 +39,10 @@ fun ErrorDialog(
                     }
                 },
                 title = {
-                    Text(text = ERROR, color = Black, fontSize = 20.sp)
+                    Text(text = state.errorMessage.title, color = Black, fontSize = 20.sp)
                 },
                 text = {
-                    Text(text = state.message, color = DarkGray, fontSize = 12.sp)
+                    Text(text = state.errorMessage.message, color = DarkGray, fontSize = 14.sp)
                 }
             )
         }
@@ -52,4 +51,3 @@ fun ErrorDialog(
 }
 
 private const val OK = "ОК"
-private const val ERROR = "Ошибка"
