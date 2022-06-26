@@ -18,16 +18,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import rustam.urazov.shikimori.R
 import rustam.urazov.shikimori.core.exception.Failure
 import rustam.urazov.shikimori.core.extention.empty
+import rustam.urazov.shikimori.features.MAIN
 import rustam.urazov.shikimori.features.MainActivityViewModel
 import rustam.urazov.shikimori.features.models.AuthorizationCodeView
 import rustam.urazov.shikimori.features.models.ErrorMessage
 import rustam.urazov.shikimori.ui.theme.*
 
 @Composable
-fun LogIn(viewModel: LogInViewModel, parentViewModel: MainActivityViewModel) {
+fun LogIn(viewModel: LogInViewModel, parentViewModel: MainActivityViewModel, navController: NavController) {
     val failure by viewModel.failure.collectAsState()
     val token by viewModel.token.collectAsState()
 
@@ -115,7 +117,7 @@ fun LogIn(viewModel: LogInViewModel, parentViewModel: MainActivityViewModel) {
         is LogInViewModel.State.TokenView -> {
             viewModel.saveTokens(token as LogInViewModel.State.TokenView)
         }
-        is LogInViewModel.State.Saved -> {}
+        is LogInViewModel.State.Saved -> { navController.navigate(MAIN) }
     }
 }
 

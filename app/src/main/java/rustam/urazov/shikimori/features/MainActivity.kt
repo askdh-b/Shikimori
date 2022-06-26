@@ -18,6 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import rustam.urazov.shikimori.features.dialogs.error.ErrorDialog
 import rustam.urazov.shikimori.features.screens.login.LogIn
 import rustam.urazov.shikimori.features.screens.login.LogInViewModel
+import rustam.urazov.shikimori.features.screens.main.Main
+import rustam.urazov.shikimori.features.screens.main.MainViewModel
 import rustam.urazov.shikimori.ui.theme.ShikimoriTheme
 import rustam.urazov.shikimori.ui.theme.White
 
@@ -46,7 +48,11 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = LOG_IN) {
                         composable(route = LOG_IN) {
                             val logInViewModel: LogInViewModel = hiltViewModel()
-                            LogIn(logInViewModel, mainActivityViewModel)
+                            LogIn(logInViewModel, mainActivityViewModel, navController)
+                        }
+                        composable(route = MAIN) {
+                            val mainViewModel: MainViewModel = hiltViewModel()
+                            Main(mainViewModel, mainActivityViewModel)
                         }
                     }
                 }
@@ -61,4 +67,5 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private const val LOG_IN = "logIn"
+const val LOG_IN = "logIn"
+const val MAIN = "main"
