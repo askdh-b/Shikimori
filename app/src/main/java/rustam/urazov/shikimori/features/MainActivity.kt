@@ -19,7 +19,6 @@ import rustam.urazov.shikimori.features.dialogs.error.ErrorDialog
 import rustam.urazov.shikimori.features.screens.login.LogIn
 import rustam.urazov.shikimori.features.screens.login.LogInViewModel
 import rustam.urazov.shikimori.features.screens.main.Main
-import rustam.urazov.shikimori.features.screens.main.MainViewModel
 import rustam.urazov.shikimori.ui.theme.ShikimoriTheme
 import rustam.urazov.shikimori.ui.theme.White
 
@@ -35,7 +34,7 @@ class MainActivity : ComponentActivity() {
             val dialog by mainActivityViewModel.dialogState.collectAsState()
 
             SideEffect {
-                systemUiController.setStatusBarColor(color = White)
+                systemUiController.setStatusBarColor(White)
             }
 
             ShikimoriTheme {
@@ -45,14 +44,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = LOG_IN) {
-                        composable(route = LOG_IN) {
+                    NavHost(navController, startDestination = LOG_IN) {
+                        composable(LOG_IN) {
                             val logInViewModel: LogInViewModel = hiltViewModel()
                             LogIn(logInViewModel, mainActivityViewModel, navController)
                         }
-                        composable(route = MAIN) {
-                            val mainViewModel: MainViewModel = hiltViewModel()
-                            Main(mainViewModel, mainActivityViewModel)
+                        composable(MAIN) {
+                            Main()
                         }
                     }
                 }
@@ -69,3 +67,4 @@ class MainActivity : ComponentActivity() {
 
 const val LOG_IN = "logIn"
 const val MAIN = "main"
+const val PROFILE = "profile"

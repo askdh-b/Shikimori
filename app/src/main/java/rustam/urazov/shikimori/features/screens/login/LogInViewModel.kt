@@ -70,7 +70,9 @@ class LogInViewModel
 
     private fun handleSavedToken(result: Result<Nothing>) {
         when (result) {
-            is Result.Saved -> { mutableToken.value = State.Saved }
+            is Result.Saved -> {
+                mutableToken.value = State.Saved
+            }
             else -> {}
         }
     }
