@@ -16,6 +16,9 @@ import androidx.navigation.compose.rememberNavController
 import rustam.urazov.shikimori.features.MainActivityViewModel
 import rustam.urazov.shikimori.features.screens.profile.Profile
 import rustam.urazov.shikimori.features.screens.profile.ProfileViewModel
+import rustam.urazov.shikimori.ui.theme.BlueStart
+import rustam.urazov.shikimori.ui.theme.DarkGray
+import rustam.urazov.shikimori.ui.theme.White
 
 @Composable
 fun Main(parentViewModel: MainActivityViewModel) {
@@ -23,15 +26,22 @@ fun Main(parentViewModel: MainActivityViewModel) {
 
     val navController = rememberNavController()
     Scaffold(bottomBar = {
-        BottomNavigation {
+        BottomNavigation(backgroundColor = White) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
 
             items.forEach { screen ->
                 BottomNavigationItem(
-                    icon = { Icon(painterResource(screen.icon), contentDescription = null) },
+                    icon = {
+                        Icon(
+                            painterResource(screen.icon),
+                            contentDescription = null
+                        )
+                    },
                     label = { Text(screen.label) },
                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    selectedContentColor = BlueStart,
+                    unselectedContentColor = DarkGray,
                     onClick = {
                         navController.navigate(screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
